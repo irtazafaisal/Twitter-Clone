@@ -1,0 +1,53 @@
+﻿@using Twitter_V1.Models
+@model Tweet
+
+<!-- Footer to be then rendered as section in layout page-->
+@section Footer {
+        <footer class="text-center text-white fixed-bottom" style="background-color: #21081a;">
+              <!-- Grid container -->
+              <div class="container p-4"></div>
+              <!-- Grid container -->
+
+              <!-- Copyright -->
+              <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                © 2023 Copyright:
+                <a class="text-white" href="https://mdbootstrap.com/">Twitter Clone</a>
+              </div>
+              <!-- Copyright -->
+        </footer>
+}
+
+@{
+    Context.Request.Cookies.TryGetValue("UserName", out string name);
+    Context.Request.Cookies.TryGetValue("UserEmail", out string uemail);
+    string pic = @"~\Images\default.jpg";
+    // {UserRepository.GetProfilePic(uemail)}
+}
+
+@{
+    string id = Context.Request.Cookies["UserId"];
+    
+    <img class="rounded" alt="Uploaded Image" src='@Url.Content("~/Uploads/" + @id + ".jpg")'>
+ }
+
+@{
+    var AllTweets = TweetRepository.GetAllTweetsBy(uemail);
+    foreach (Tweet t in AllTweets)
+    {
+        <text>
+            <form method="post" action="/Profile/DeleteTweet">
+                <div class="card">
+                    <h2 class="card-header">@t.Name</h2>
+                    <div class="card-body">
+                        <h3 class="card-title">@t.Email</h3>
+                        <p class="card-text">@t.Text</p>
+                        <p class="card-text">@t.Id</p>
+                        <input asp-for="Id" type="hidden" value=@t.Id name="TweetId">
+                        <input class="btn btn-danger btn-lg" type="submit" value="Delete" />
+                    </div>
+                </div>
+            </form>
+        </text>
+
+    }
+}
